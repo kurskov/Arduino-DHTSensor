@@ -38,6 +38,7 @@ void DHTSensor::setPin(uint8_t pin) {
 
 uint8_t DHTSensor::readData() {
     uint8_t testLine;
+    uint8_t checksum = 0;
 
     // Empties last data
     for (uint8_t i = 0; i < 5; i++) {
@@ -67,7 +68,27 @@ uint8_t DHTSensor::readData() {
     }
     
     // Data reception 
+    for (uint8_t i = 0; i < 5; i++) {
+        readByte(i);
+    }
 
+    // Checksum check
+    checksum = _data[0] + _data[1] + _data[2] + _data[3];
+    if ( _data[4] != checksum) {
+        return DHT_ERROR_CHECKSUM;
+    }
+
+    // Return to the send phase
+    pinMode(_pin, OUTPUT);
+    digitalWhite(_pin, HIGH);
 
     return DHT_STATUS_OK
+}
+
+uint8_t readByte(uint8_t byteNumber) {
+    uint8_t dataByte = 0;
+    // Loop for 8 bits
+    for (uint8_t i = 0; i < 8; i++) {
+
+    }
 }
